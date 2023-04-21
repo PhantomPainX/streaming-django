@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualización terminada</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            color: aliceblue;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .main__wrapper {
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: #f0b400;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #000 !important;
+        }
+
+        h3, h2 {
+            text-align: center;
+            margin: 15px 0 10px 0;
+        }
+
+        .content {
+            margin: 30px 0 0 0;
+            padding: 0 15px 0 15px;
+        }
+
+        .message {
+            color: aliceblue;
+            text-align: center;
+        }
+
+        .message p {
+            font-size: .9rem;
+        }
+
+        .ventajas td {
+            background-color: #f08400;
+            color: rgb(255, 255, 255);
+            padding: 10px;
+            border-top-right-radius: 20px;
+            border-bottom-left-radius: 20px;
+            border-top-left-radius: 2px;
+            border-bottom-right-radius: 2px;
+        }
+
+        .image-card {
+            margin: auto;
+            border: #5d5d5d solid 1px;
+            border-radius: 10px;
+            transition: border .2s ease;
+            /* align-items: center;
+            justify-content: center; */
+            height: 100%;
+            padding: 10px 5px 10px 5px;
+        }
+
+        .image-card .image {
+            margin: auto 0 auto 0;
+        }
+
+        .image-card .image img {
+            width: 50px;
+        }
+
+        .playstore-card {
+            transition: all .1s ease-in-out;
+            margin-top: 20px;
+        }
+
+        a {
+            text-decoration: none !important;
+            color: rgb(255, 255, 255) !important;
+        }
+
+        .playstore-card:hover {
+            border: #3bccff solid 1px;
+        }
+
+        .playstore-card .card-content h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin: 0px 0 10px 0;
+        }
+
+        .playstore-card .card-content p {
+            font-size: .9rem;
+            font-weight: 100;
+            margin: 5px 0 0px 0;
+        }
+
+        .footer {
+            background-color: #5d5d5d;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+
+            text-align: center;
+            margin: 20px 0 0 0;
+            padding: 20px 10px 20px 10px;
+        }
+
+        .footer h3 {
+            margin: 0 0 6px 0;
+        }
+
+        .footer p a {
+            color: #f0b400 !important;
+            text-decoration: none;
+        }
+    </style>
+
+</head>
+<body style="background-color: #000; color: aliceblue; font-family: Arial, Helvetica, sans-serif;">
+
+    <div class="main__wrapper" style="min-height: 100vh;">
+        <div class="header">
+            <table style="border-spacing: 10px; margin: auto;">
+                <tr>
+                    <td>
+                        <img width="50px" height="50px" src="http://127.0.0.1/media/icons/android-chrome-512x512.png" alt="logo 127.0.0.1">
+                    </td>
+                    <td>
+                        <h1 style="font-size: 1.5rem;">127.0.0.1</h1>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    
+        <div class="content">
+            <h2>¡Hubo una nueva actualización!</h2>
+    
+            <div class="message">
+                <p>¡Hola! la actualización de Animes y Episodios nuevos ha terminado. {{ hora_actual }} | {{ timezone }}</p>
+
+                {% if animes %}
+                    <h3>Animes Agregados ({{ animes|length }})</h3>
+                    <table class="ventajas" style="border-spacing: 15px; margin: auto">
+                        {% for anime in animes %}
+                            <tr>
+                                <td>{{ anime.nombre }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+
+                {% if capitulos %}
+                    <h3>Episodios Agregados ({{ capitulos|length }})</h3>
+                    <table class="ventajas" style="border-spacing: 15px; margin: auto">
+                        {% for capitulo in capitulos %}
+                            <tr>
+                                <td>{{ capitulo.anime.nombre }} - Episodio {{ capitulo.numero }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <h3>¿Necesitas ayuda?</h3>
+        <p>Si tienes alguna duda o necesitas algo de nosotros, no dudes en contactarnos 
+            a nuestro correo electrónico <a href="mailto:contacto@127.0.0.1">contacto@127.0.0.1</a>
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% autoescape off %}
+Nombre del remitente: {{ nombre_completo }}
+Email: {{ email }}
+
+Asunto: {{ asunto }}
+
+Mensaje: 
+
+{{ mensaje }}
+{% endautoescape %}

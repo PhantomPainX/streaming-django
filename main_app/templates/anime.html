@@ -1,0 +1,642 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block head %}
+    {% autoescape off %}
+    <meta name="description" content="Mira {{ anime.nombre }} online sub español gratis y en HD. Ver {{ anime.nombre }} sub español sin anuncios. ¡Además puedes guardar tus animes favoritos!">
+    <meta name="keywords" content="{{anime.nombre}} sub español,{{anime.nombre}} online,ver {{anime.nombre}} online,anime {{anime.nombre}} online, ver online {{anime.nombre}},ver {{anime.nombre}} online en HD,ver episodios de {{anime.nombre}} online">
+
+    <meta property="og:site_name" content="127.0.0.1">
+    <meta property="og:url" content="http://127.0.0.1{{anime.get_absolute_url}}">
+    <meta property="og:type" content="video">
+    <meta property="og:image" content="/media/{{anime.imagen}}">
+    <meta property="og:title" content="Ver {{ anime.nombre }} online en HD - 127.0.0.1">
+    <meta property="og:description" content="Mira {{ anime.nombre }} online sub español gratis y en HD. Ver {{ anime.nombre }} sub español sin anuncios. Puedes guardar tus animes favoritos y llevar un seguimiento de sus episodios.">
+    <link rel="canonical" href="http://127.0.0.1{{anime.get_absolute_url}}">
+    <link rel="stylesheet" href="{% static 'css/refactor/anime.css' %}">
+    <title>Ver {{ anime.nombre }} sub español - 127.0.0.1</title>
+{% endautoescape %}
+{% endblock %}
+
+{% block content %}
+
+<div class="main__wrapper">
+    <div class="indice">
+        <p>
+            <a href="/">
+                Inicio 
+            </a>
+            /
+            <a href="/directorio/?tipo={{ anime.tipo.id }}" rel="nofollow">
+                {{ anime.tipo }} 
+            </a>
+            /
+            {% autoescape off %}
+                <a href="{{ anime.get_absolute_url }}">
+                    {{ anime.nombre }} 
+                </a>
+            {% endautoescape %}
+        </p>
+    </div>
+
+    <div class="main-anime-page">
+        <div class="left-side">
+            <div class="section-banner">
+                <img class="blur-background" id="blur_img" src="/media/{{anime.imagen}}" alt="{{ anime.nombre }}">
+                <div class="blur-wrap">
+                    <div class="contenedor-banner">
+                        <div class="asides">
+                            <aside class="banner-img">
+                                <figure>
+                                    <img id="anime_image" loading="lazy" class="skeleton" src="/media/{{ anime.imagen }}" alt="{% autoescape off %}{{ anime.nombre }}{% endautoescape %}">
+                                    {% if anime.estado.estado == 'En emision' %}
+                                        <span class="estado emision">{{ anime.estado }}</span>
+                                    {% endif %}
+                                    {% if anime.estado.estado == 'Finalizado' %}
+                                        <span class="estado finalizado">{{ anime.estado }}</span>
+                                    {% endif %}
+                                    {% if anime.estado.estado == 'Proximamente' %}
+                                        <span class="estado proximamente">{{ anime.estado }}</span>
+                                    {% endif %}
+    
+                                    <span id="nota" class="stars"></span>
+                                </figure>
+                            </aside>
+                            <aside class="banner-info">
+                                <div class="show-dinfo">
+                                    {% autoescape off %}
+                                        <div class="titles">
+                                            <h1>{{ anime.nombre }}</h1>
+                                            <h4 id="japanese_title"></h4>
+                                        </div>
+                                        <div class="show-data" id="show-data">
+                                            <div class="api-data" id="api-container">
+                                                <span class="item br bg" id="clasificacion"></span>
+                                                <span class="dot"></span>
+                                            </div>
+                                            <span class="item bl">{{ anime.tipo }}</span>
+                                            <span class="dot"></span>
+                                            <span class="item br">{{ anime.estreno }}</span>
+                                            {% if anime.tipo is not "Película" %}
+                                                <span class="dot"></span>
+                                                <span class="item">Eps: {{episodios.count}} <span id="total_ep"></span></span>
+                                            {% endif %}
+
+                                        </div>
+                                        <span class="item" id="minutes"></span>
+                                        <div class="idioma">
+                                            <img class="idioma-thumbnail" src="/media/{{ anime.idioma.thumbnail }}" alt="{{ anime.idioma.idioma }}"> {{ anime.idioma.idioma }}
+                                        </div>
+                                        <div class="show-buttons">
+                                            {% if user.is_authenticated %}
+                                                <button class="btn-heart" data-aid="{{ anime.id }}">
+                                                    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                                                </button>
+                                                {% if user.is_staff %}
+                                                    <a class="btn-mod" href="/admin/main_app/anime/{{ anime.id }}/change/">
+                                                        Modificar
+                                                    </a>
+                                                {% endif %}
+                                            {% else %}
+                                                <a href="{% url 'login' %}?next={{ request.get_full_path }}" rel="nofollow">
+                                                    <button class="btn-heart">
+                                                        <i class="icon fas fa-heart"></i>Agregar a Favoritos
+                                                    </button>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                        {% if anime.prox_episodio %}
+                                            <div class="prox-episodio">
+                                                <span>Próx Episodio: {{ anime.prox_episodio }} ({{ anime.human_prox_episodio }})</span>
+                                            </div>
+                                        {% endif %}
+                                    {% endautoescape %}
+                                </div>
+                            </aside>
+                        </div>
+
+                        <div class="show-dinfo-below" id="show-dinfo-below">
+                            {% autoescape off %}
+                                {% if anime.sinopsis %}
+                                    <label for="sinopsis"><strong>Sinopsis:</strong></label>
+                                    <p class="sinopsis" id="sinopsis">{{ anime.sinopsis }}</p>
+                                {% endif %}
+                            {% endautoescape %}
+                            {% if anime.generos.all %}
+                                <div class="generos-wrap">
+                                    <label for="generos">Géneros:</label>
+                                    {% for genero in anime.generos.all %}
+                                        <a class="item br" href="/directorio/?genero={{ genero.id }}" rel="nofollow">{{ genero.genero }}</a> 
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="more-info" id="more-info">
+                                <p id="aired"></p>
+                                <p id="productores"></p>
+                                <p id="estudios"></p>
+                                {% if user.is_authenticated %}
+                                    {% if user.is_staff %}
+                                        <p class="anime-id">
+                                            <strong>Anime ID:</strong> {{ anime.id }}
+                                        </p>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                            <div class="more-button" id="btn-more-container">
+                                <button class="btn-more" id="btn-more">
+                                    
+                                </button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="anuncios" style="margin-bottom: 20px;">
+                <a href="https://play.google.com/store/apps/details?id=com.127.0.0.1.application" target="_blank">
+                    <div class="image-card playstore-card">
+                        <div class="image">
+                            <img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Google_Play_Prism.max-1100x1100.png" alt="logo playstore">
+                        </div>
+                        <div class="content">
+                            <h2>¡Descarga nuestra aplicación!</h2>
+                            <p>Es gratis y siempre lo será</p>
+                            <p>Recargado con más fuentes de video y Chromecast</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="#" target="_blank">
+                    <div class="image-card discord-card">
+                        <div class="image">
+                            <img src="https://logodownload.org/wp-content/uploads/2017/11/discord-logo-4-1.png" alt="discord">
+                        </div>
+                        <div class="content">
+                            <h2>¡Únete a nuestro nuevo Discord!</h2>
+                            <p>Buscamos moderadores y administradores</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        
+            <div class="seccion-2">
+                <section class="section">
+                    <div class="titulo">
+                        {% if anime.tipo.tipo == "Película" %}
+                            {% if total_episodios == 1 %}
+                                <h2><i class="icon fas fa-list"></i>Película</h2>
+                            {% else %}
+                                <h2><i class="icon fas fa-list"></i>Episodios</h2>
+                                <button class="btn-reverse" id="reverse">Orden Arriba</button>
+                            {% endif %}
+                        {% else %}
+                            <h2><i class="icon fas fa-list"></i>Episodios</h2>
+                            <button class="btn-reverse" id="reverse">Orden Arriba</button>
+                        {% endif %}
+                    </div>
+        
+                    <div class="episodios">
+                        {% if user.is_authenticated %}
+                            <ul id="eps">
+                                {% if episodios %}
+                                    {% for episodio in episodios %}
+                                        {% if anime.tipo.tipo == "Película" %}
+                                            {% if total_episodios == 1 %}
+                                                <li data-epid="{{ episodio.id }}">
+                                                    {% if episodio.visible %}
+                                                        <a href="/ver/{{episodio.slug}}">
+                                                            <i class="icon fas fa-play"></i>
+                                                            <div class="ep_info">
+                                                                <p>Ver Pelicula</p>
+                                                                <p class="date">{{ episodio.fecha }}</p>
+                                                            </div>
+                                                        </a>
+                                                    {% else %}
+                                                        {% if user.is_staff %}
+                                                        <a href="/ver/{{episodio.slug}}">
+                                                        {% else %}
+                                                        <a href="#">
+                                                        {% endif %}
+                                                            <i class="icon fas fa-play"></i>
+                                                            <div class="ep_info">
+                                                                <p>Ver Pelicula (eliminado por DMCA)</p>
+                                                                <p class="date">{{ episodio.fecha }}</p>
+                                                            </div>
+                                                        </a>
+                                                    {% endif %}
+                                                    <button class="btn-eye" id="agregarVista" data-id="{{ episodio.id }}">
+                                                        <div class="spinner"></div>
+                                                    </button>
+                                                    <!-- <button class="btn-eye" id="agregarVista" data-id="{{ episodio.id }}"><i class="fas fa-eye-slash"></i></button> -->
+                                                </li>
+                                            {% else %}
+                                                <li data-epid="{{ episodio.id }}">
+                                                    {% if episodio.visible %}
+                                                        <a href="/ver/{{episodio.slug}}">
+                                                            <i class="icon fas fa-play"></i>
+                                                            <div class="ep_info">
+                                                                <p>Episodio {{ episodio.numero }}</p>
+                                                                <p class="date">{{ episodio.fecha }}</p>
+                                                            </div>
+                                                        </a>
+                                                    {% else %}
+                                                        {% if user.is_staff %}
+                                                        <a href="/ver/{{episodio.slug}}">
+                                                        {% else %}
+                                                        <a href="#">
+                                                        {% endif %}
+                                                            <i class="icon fas fa-play"></i>
+                                                            <div class="ep_info">
+                                                                <p>Episodio {{ episodio.numero }} (eliminado por DMCA)</p>
+                                                                <p class="date">{{ episodio.fecha }}</p>
+                                                            </div>
+                                                        </a>
+                                                    {% endif %}
+                                                    <button class="btn-eye" id="agregarVista" data-id="{{ episodio.id }}">
+                                                        <div class="spinner"></div>
+                                                    </button>
+                                                </li>
+                                            {% endif %}
+                                        {% else %}
+                                            <li data-epid="{{ episodio.id }}">
+                                                {% if episodio.visible %}
+                                                    <a href="/ver/{{episodio.slug}}">
+                                                        <i class="icon fas fa-play"></i>
+                                                        <div class="ep_info">
+                                                            <p>Episodio {{ episodio.numero }}</p>
+                                                            <p class="date">{{ episodio.fecha }}</p>
+                                                        </div>
+                                                    </a>
+                                                {% else %}
+                                                    {% if user.is_staff %}
+                                                    <a href="/ver/{{episodio.slug}}">
+                                                    {% else %}
+                                                    <a href="#">
+                                                    {% endif %}
+                                                        <i class="icon fas fa-play"></i>
+                                                        <div class="ep_info">
+                                                            <p>Episodio {{ episodio.numero }} (eliminado por DMCA)</p>
+                                                            <p class="date">{{ episodio.fecha }}</p>
+                                                        </div>
+                                                    </a>
+                                                {% endif %}
+                                                <button class="btn-eye" id="agregarVista" data-id="{{ episodio.id }}">
+                                                    <div class="spinner"></div>
+                                                </button>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <li>
+                                        <p>No hay episodios disponibles aun.</p>
+                                    </li>
+                                {% endif %}
+                            </ul>
+
+                        {% else %}
+                            <ul id="eps">
+                                {% if episodios %}
+                                    {% for episodio in episodios %}
+                                        {% if anime.tipo.tipo == "Película" %}
+                                            {% if total_episodios == 1 %}
+                                                <li>
+                                                    {% if episodio.visible %}
+                                                        <a href="/ver/{{episodio.slug}}">
+                                                            <i class="icon fas fa-play"></i>
+                                                            <div class="ep_info">
+                                                                <p>Ver Pelicula</p>
+                                                                <p class="date">{{ episodio.fecha }}</p>
+                                                            </div>
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="#">
+                                                            <i class="icon fas fa-play"></i>
+                                                            <div class="ep_info">
+                                                                <p>Ver Pelicula (eliminado por DMCA)</p>
+                                                                <p class="date">{{ episodio.fecha }}</p>
+                                                            </div>
+                                                        </a>
+                                                    {% endif %}
+                                                    <button class="btn-eye">
+                                                        <a href="{% url 'login' %}?next={{ request.get_full_path }}" rel="nofollow"><i class="fas fa-eye-slash"></i></a>
+                                                    </button>
+                                                </li>
+                                            {% else %}
+                                                <li>
+                                                    {% if episodio.visible %}
+                                                        <a href="/ver/{{episodio.slug}}">
+                                                            <i class="icon fas fa-play"></i>
+                                                            <div class="ep_info">
+                                                                <p>Episodio {{ episodio.numero }}</p>
+                                                                <p class="date">{{ episodio.fecha }}</p>
+                                                            </div>
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="#">
+                                                            <i class="icon fas fa-play"></i>
+                                                            <div class="ep_info">
+                                                                <p>Episodio {{ episodio.numero }} (eliminado por DMCA)</p>
+                                                                <p class="date">{{ episodio.fecha }}</p>
+                                                            </div>
+                                                        </a>
+                                                    {% endif %}
+                                                    <button class="btn-eye">
+                                                        <a href="{% url 'login' %}?next={{ request.get_full_path }}" rel="nofollow"><i class="fas fa-eye-slash"></i></a>
+                                                    </button>
+                                                </li>
+                                            {% endif %}
+                                        {% else %}
+                                            <li>
+                                                {% if episodio.visible %}
+                                                    <a href="/ver/{{episodio.slug}}">
+                                                        <i class="icon fas fa-play"></i>
+                                                        <div class="ep_info">
+                                                            <p>Episodio {{ episodio.numero }}</p>
+                                                            <p class="date">{{ episodio.fecha }}</p>
+                                                        </div>
+                                                    </a>
+                                                {% else %}
+                                                    <a href="#">
+                                                        <i class="icon fas fa-play"></i>
+                                                        <div class="ep_info">
+                                                            <p>Episodio {{ episodio.numero }} (eliminado por DMCA)</p>
+                                                            <p class="date">{{ episodio.fecha }}</p>
+                                                        </div>
+                                                    </a>
+                                                {% endif %}
+                                                <button class="btn-eye">
+                                                    <a href="{% url 'login' %}?next={{ request.get_full_path }}" rel="nofollow"><i class="fas fa-eye-slash"></i></a>
+                                                </button>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <li style="border-bottom: none;">
+                                        <p>No hay episodios disponibles aun.</p>
+                                    </li>
+                                {% endif %}
+            
+                            </ul>
+                        {% endif %}
+                    </div>
+                </section>
+
+            </div>
+            
+            <section class="section">
+                <div class="titulo">
+                    <h2><i class="icon fas fa-comments"></i>Comentarios</h2>
+                </div>
+                <div class="comentarios">
+                    <button class="boton-expandible comentario" id="abrir-comentarios" onclick="abrirComentarios(this)">Mostrar Comentarios</button>
+                </div>
+                <noscript>Activa JavaScript para ver los comentarios de <a href="https://disqus.com/?ref_noscript">Disqus.</a></noscript>
+            </section>
+        </div>
+
+        <div class="right-side">
+
+            <section class="section" id="trailer_container">
+                <div class="titulo" style="margin-bottom: 0 !important">
+                    <h2><i class="icon fas fa-video"></i>Trailer</h2>
+                </div>
+                <div class="embed">
+                    <iframe id="iframe-element" class="responsive-iframe" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <noscript>Activa JavaScript para ver los comentarios de <a href="https://disqus.com/?ref_noscript">Disqus.</a></noscript>
+            </section>
+
+            <!-- <div data-clickadilla-banner="61552"></div> -->
+
+            <div id="animes-right-side">
+                <div class="titulo">
+                    <h2><i class="icon fas fa-burn icon-yellow"></i>Relacionados</h2>
+                </div>
+                <div class="articulos max-height-350">
+                    {% for anime in relacionados %}
+                    <a href="{% if anime.tipo.tipo == 'TV' or anime.tipo.tipo == 'OVA' or anime.tipo.tipo == 'Película' or anime.tipo.tipo == 'Especial' %}{{anime.get_absolute_url}}{% else %}{{anime.get_latino_url}}{% endif %}">
+                        <article>
+                            <div class="imagen">
+                                <figure>
+                                    <img loading="lazy" class="skeleton" src="/media/{{anime.imagen}}" alt="{% autoescape off %}{{anime.nombre}}{% endautoescape %}">
+                                </figure>
+                            </div>
+        
+                            <div class="contenido">
+                                <span>{{anime.tipo}}</span>
+                                {% autoescape off %}
+                                    <h3>{{anime.nombre}}</h3>
+                                {% endautoescape %}
+                                <span>{{anime.estado.estado}}</span>
+                            </div>
+                        </article>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div id="animes-right-side">
+                <div class="titulo">
+                    <h2><i class="icon fas fa-burn icon-pink"></i>Últimos Episodios</h2>
+                </div>
+                <div class="articulos max-height-350">
+                    {% for episodio, ep_total in ultimos_episodios %}
+                    <a href="/ver/{{episodio.slug}}">
+                        <article>
+                            <div class="imagen">
+                                <figure>
+                                    <img loading="lazy" class="skeleton" src="/media/{{episodio.anime.imagen}}" alt="{% autoescape off %}{{episodio.anime.nombre}}{% endautoescape %}">
+                                </figure>
+                            </div>
+        
+                            <div class="contenido">
+                                <span>{{episodio.anime.tipo}} | {{episodio.anime.estreno}}</span>
+                                {% autoescape off %}
+                                    <h3>{{ episodio.anime.nombre }}</h3>
+                                {% endautoescape %}
+                                {% if episodio.anime.estado == finalizado and episodio.numero == ep_total %}
+                                <span>Último Episodio</span>
+                                {% else %}
+                                    <span>Episodio {{episodio.numero}}</span>
+                                {% endif %}
+                            </div>
+                        </article>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'js/funciones.js' %}"></script>
+<script src="{% static 'js/episodios.js' %}"></script>
+{% if user.is_authenticated %}<script src="{% static 'js/anime.js' %}"></script>{% endif %}
+<script async>
+    try {
+        fetch('https://api.jikan.moe/v4/anime?q={{ anime.nombre }}&limit=20')
+        .then(response => response.json()).catch(error => console.log(error))
+        .then(json => {
+
+            const results = json.data;
+            var correctAnime = false;
+            
+            for (let result of results) {
+                var result_title = result.title.toLowerCase();
+                const db_title = '{{ anime.nombre }}'.toLowerCase();
+
+                if (result_title == db_title) {
+                    //console.log("API ->", result);
+                    correctAnime = true;
+                } else {
+                    const other_titles = result.titles;
+                    for (let other_title of other_titles) {
+                        var other_title_lower = other_title.title.toLowerCase();
+                        if (other_title_lower == db_title) {
+                            //console.log("API ->", result);
+                            correctAnime = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (correctAnime) {
+                    const api_container = document.getElementById('api-container'); 
+                    const clasificacion_span = document.getElementById('clasificacion');
+                    const nota_span = document.getElementById('nota');
+                    const minutes_span = document.getElementById('minutes');
+                    const total_ep = document.getElementById('total_ep');
+                    const aired_p = document.getElementById('aired');
+                    const productores_p = document.getElementById('productores');
+                    const estudios_p = document.getElementById('estudios');
+
+                    if (result.episodes != null) {
+                        total_ep.innerHTML = "/ "+result.episodes;
+                        total_ep.classList.add("show");
+                    }
+
+                    if (result.producers != null && result.producers.length > 0) {
+
+                        let productores = result.producers.map(
+                            productor => 
+                            '<a href="'+productor.url+'" target="_blank">'+productor.name+'</a>'
+                        ).join(", ");
+
+                        productores_p.innerHTML = "<strong>Productores:</strong> "+productores+".";
+                        productores_p.classList.add("show");
+                    }
+
+                    if (result.studios != null && result.studios.length > 0) {
+
+                        let estudios = result.studios.map(
+                            estudio => 
+                            '<a href="'+estudio.url+'" target="_blank">'+estudio.name+'</a>'
+                        ).join(", ");
+
+                        estudios_p.innerHTML = "<strong>Estudios:</strong> "+estudios+".";
+                        estudios_p.classList.add("show");
+                    }
+
+                    if (result.duration != null && result.duration != 'Unknown') {
+                        let duracion = result.duration.split(' ').slice(0, 2);
+                        duracion = duracion[0] + ' ' + duracion[1] + ' por' + ' video';
+                        minutes_span.innerHTML = '<i class="icon fas fa-clock"></i>' + duracion;
+                        minutes_span.classList.add('show');
+                    }
+
+                    if (result.rating != null) { 
+                        clasificacion_span.innerHTML = result.rating;
+                        nota_span.innerHTML = '<i class="icon fas fa-star"></i>' + result.score;
+                        nota_span.classList.add('show');
+                        api_container.classList.add('show');
+                    }
+
+                    if (result.title_japanese != null) {
+                        const jp_title = document.getElementById('japanese_title');
+                        jp_title.innerHTML = result.title_japanese;
+                        jp_title.classList.add('show');
+                    }
+
+                    if (result.trailer.embed_url != null) {
+                        const trailer_container = document.getElementById('trailer_container');
+                        const iframe = document.getElementById('iframe-element');
+                        const embed_url = result.trailer.embed_url.replace('autoplay=1', 'autoplay=0');
+
+                        iframe.src = embed_url;
+                        trailer_container.classList.add('show');
+                    }
+
+                    if (result.aired != null && result.aired.prop != null && result.aired.prop.from != null) {
+                        aired_p.innerHTML = "<strong>Transmitido:</strong> "+result.aired.string.replace('to', 'hasta');
+                        aired_p.classList.add("show");
+                    }
+
+                    const show_dinfo_below = document.getElementById('show-dinfo-below');
+                    const more_info_container = document.getElementById('more-info');
+                    const btn_more_container = document.getElementById('btn-more-container');
+                    const btn_more = document.getElementById('btn-more');
+
+                    show_dinfo_below.style.paddingBottom = '30px';
+
+                    btn_more.innerHTML = '<i class="icon fas fa-angle-down"></i> Más información';
+                    btn_more_container.classList.add('show');
+
+                    //si btn_more se clickea
+                    btn_more.addEventListener('click', function() {
+                        //si se clickea el boton, agregar clase show a more-info-container, si se clinea otra vez, quitarla
+                        if (more_info_container.style.maxHeight) {
+                            more_info_container.style.maxHeight = null;
+                            show_dinfo_below.style.paddingBottom = '30px';
+                            btn_more.innerHTML = '<i class="icon fas fa-angle-down"></i> Más información';
+                            more_info_container.classList.remove('show');
+                        } else {
+                            more_info_container.classList.add('show');
+                            show_dinfo_below.style.paddingBottom = '20px';
+                            more_info_container.style.maxHeight = more_info_container.scrollHeight + 'px';
+                            btn_more.innerHTML = '<i class="icon fas fa-angle-up"></i> Menos información';
+                        }
+                    });
+
+
+                    fetch('https://api.jikan.moe/v4/anime/'+result.mal_id+'/pictures')
+                    .then(response => response.json()).catch(error => console.log(error))
+                    .then(json => {
+                        const pictures = json.data;
+                        const anime_image = document.getElementById('anime_image');
+                        const blur_img = document.getElementById('blur_img');
+
+                        if (pictures.length > 0) {
+                            
+                            if (pictures.length > 2) {
+                                var i = 0;
+                                var interval = setInterval(() => {
+                                    anime_image.src = pictures[i].jpg.large_image_url;
+                                    blur_img.src = pictures[i].jpg.large_image_url;
+
+                                    //console.log(pictures[i].jpg.large_image_url);
+                                    i++;
+                                    if (i >= pictures.length) {
+                                        i = 0;
+                                    }
+                                }, 8000);
+                            }
+                        }
+                    });
+
+                    break;
+                }
+            }
+            if (!correctAnime) {
+                console.log("Anime not found");
+            }
+        }).catch(error => console.log(error));
+    } catch (error) {
+        console.log(error);
+    }
+</script>
+{% endblock %}

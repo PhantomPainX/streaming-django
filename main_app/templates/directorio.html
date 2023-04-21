@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+    
+{% block head %}
+    <meta name="description" content="Página {{ pagina_actual }} de nuestro directorio con más de 3500 animes disponibles totalmente gratis, con todos sus episodios, para siempre.">
+    <meta name="keywords" content="anime, anime subtitulado español, anime sub español, anime gratis, anime online, anime sub, ver anime, ver anime gratis">
+
+    <meta property="og:site_name" content="127.0.0.1">
+    <meta property="og:title" content="Directorio{% if pagina_actual > 1 %} Página {{ pagina_actual }} {% endif %}">
+    <meta property="og:url" content="http://127.0.0.1{{ request.get_full_path }}">
+    <meta property="og:type" content="image">
+    <meta property="og:image" content="/media/icons/android-chrome-192x192.png">
+    <meta property="og:description" content="Página {{ pagina_actual }} de nuestro directorio con más de 3500 animes disponibles totalmente gratis, con todos sus episodios, para siempre.">
+    <link rel="stylesheet" href="{% static 'css/refactor/directorio.css' %}">
+    <title>Directorio {% if pagina_actual > 1 %}Página {{ pagina_actual }} {% endif %}- 127.0.0.1</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="main__wrapper">
+
+    <section>
+        <div class="titulo">
+            {% if request.GET.q %}
+                <h1><i class="icon fa fa-search"></i>Buscando <strong>{{ request.GET.q }}</strong></h1>
+            {% else %}
+                <h1><i class="icon fas fa-folder-open"></i>Directorio{% if pagina_actual > 1 %} Página {{ pagina_actual }}{% endif %}</h1>
+            {% endif %}
+        </div>
+
+        <div class="animes-filtro">
+
+            <div class="filtros-container">
+
+                <button class="boton-expandible" id="abrir-filtros" onclick="abrirFiltros(this)">Abrir Filtros</button>
+                <div class="filtros">
+                    <form action="/directorio" method="GET">
+                        <div class="filtro">
+                            <label>Estados</label>
+                            <div>
+                                <select name="estado" id="estado">
+                                    {% if request.GET.estado %}
+                                        <option value="{{ request.GET.estado }}" hidden selected>{{ nom_estado }}</option>
+                                    {% else %}
+                                        <option value="" disabled selected hidden>Seleccionar</option>
+                                    {% endif %}
+                                    {% for estado in estados %}
+                                        <option value="{{estado.id}}">{{estado.estado}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+    
+                        <div class="filtro">
+                            <label>Tipos</label>
+                            <div>
+                                <select  name="tipo" id="tipo">
+                                    {% if request.GET.tipo %}
+                                        <option value="{{ request.GET.tipo }}" hidden selected>{{ nom_tipo }}</option>
+                                    {% else %}
+                                        <option value="" disabled selected hidden>Seleccionar</option>
+                                    {% endif %}
+                                    {% for tipo in tipos %}
+                                        <option value="{{tipo.id}}">{{tipo.tipo}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+    
+                        <div class="filtro">
+                            <label>Géneros</label>
+                            <div>
+                                <select name="genero" id="tipo">
+                                    {% if request.GET.genero %}
+                                        <option value="{{ request.GET.genero }}" hidden selected>{{ nom_genero }}</option>
+                                    {% else %}
+                                        <option value="" disabled selected hidden>Seleccionar</option>
+                                    {% endif %}
+                                    {% for genero in generos %}
+                                        <option value="{{genero.id}}">{{genero.genero}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+    
+                        <div class="filtro">
+                            <label>Estreno</label>
+                            <div>
+                                <select name="estreno" id="estreno">
+                                    {% if request.GET.estreno %}
+                                        <option value="{{ request.GET.estreno }}" hidden selected>{{ nom_estreno }}</option>
+                                    {% else %}
+                                        <option value="" disabled selected hidden>Seleccionar</option>
+                                    {% endif %}
+                                    {% for estreno in estrenos reversed %}
+                                        <option value="{{estreno}}">{{estreno}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="filtro">
+                            <label>Idioma</label>
+                            <div>
+                                <select name="idioma" id="idioma">
+                                    {% if request.GET.idioma %}
+                                        <option value="{{ request.GET.idioma }}" hidden selected>{{ nom_idioma }}</option>
+                                    {% else %}
+                                        <option value="" disabled selected hidden>Seleccionar</option>
+                                    {% endif %}
+                                    {% for idioma in idiomas %}
+                                        <option value="{{idioma.id}}">{{idioma}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+    
+                        <div class="filtro">
+                            <div>
+                                <div class="search">
+                                    <input class="form-style" name="q" type="search" placeholder="Busca algo..." aria-label="Busca algo..." value="{{ request.GET.q }}">
+                                    <i class="fa fa-search input-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="filtro">
+                            <div>
+                                <input class="form-button" type="submit" value="Buscar">
+                            </div>
+                        </div>
+    
+                    </form>
+                </div>
+            </div>
+
+            <div class="animes-container">
+                <ul class="grid-animes directorio">
+                    {% for anime in animes %}
+                    <li>
+                        <article>
+                            <a href="{{anime.get_absolute_url}}">
+                                <figure>
+                                    <span class="tipo">{{ anime.tipo }}</span>
+                                    <span class="estreno">{{ anime.estreno }}</span>
+                                    <div class="bottom">
+                                        <img class="idioma-thumbnail" src="/media/{{ anime.idioma.thumbnail }}" alt="{{ anime.idioma.idioma }}">
+                                        <div class="figure-title">
+                                            <p class="gray">{{ anime.estado.estado }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="main-img">
+                                        <img loading="lazy" class="skeleton" src="/media/{{anime.imagen}}" alt="{% autoescape off %}{{anime.nombre}}{% endautoescape %}">
+                                    </div>
+                                </figure>
+                                {% autoescape off %}
+                                    <p>{{anime.nombre}}</p>
+                                {% endautoescape %}
+                            </a>
+                        </article>
+                    </li>
+                    {% endfor %}
+        
+                </ul>
+            </div>
+        </div>
+        <div class="paginador-container">
+            <nav>
+                <ul class="pagination">
+        
+                    <!-- <li class="page-item {% if not animes.has_previous %} disabled {% endif %}">
+                        <a class="page-link" href="?p=1&q={{q}}" tabindex="-1">Primera</a>
+                    </li> -->
+                    <li class="page-controller left {% if not animes.has_previous %} disabledd {% endif %}">
+                        <a class="page-link" rel="nofollow" href="{% if animes.has_previous %}?p={{ animes.previous_page_number }}{% endif %}{% for data in data_list %}{{ data }}{% endfor %}" tabindex="-1"><i class="fas fa-caret-left"></i></a>
+                    </li>
+        
+                    <!-- {% if animes.number|add:'-2' > 1 %}
+                        <li class="page-item disabled"><a class="page-link" href="?p={{ animes.number|add:'-3' }}">&hellip;</a></li>
+                    {% endif %} -->
+        
+                    {% for i in animes.paginator.page_range %}
+                        {% if animes.number == i %}
+                            <li class="active page-item active"><a class="page-link" rel="nofollow" href="?p={{ i }}{% for data in data_list %}{{ data }}{% endfor %}">{{ i }}</a></li>
+                        {% elif i > animes.number|add:'-3' and i < animes.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" rel="nofollow" href="?p={{ i }}{% for data in data_list %}{{ data }}{% endfor %}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+        
+                    <!-- {% if animes.paginator.num_pages > animes.number|add:'2' %}
+                        <li class="page-item disabled"><a class="page-link" href="?p={{ animes.number|add:'3' }}">&hellip;</a></li>
+                    {% endif %} -->
+        
+                    <li class="page-controller right {% if not animes.has_next %} disabledd {% endif %}">
+                        <a class="page-link" rel="nofollow" href="{% if animes.has_next %} ?p={{ animes.next_page_number }}{% endif %}{% for data in data_list %}{{ data }}{% endfor %}"><i class="fas fa-caret-right"></i></a>
+                    </li>
+                    <!-- {% if animes.paginator.num_pages != 1 %}
+                    <li class="page-item {% if not animes.has_next %} disabled {% endif %}">
+                        <a class="page-link" href="{% if animes.has_next %} ?p={{ animes.paginator.num_pages }}  {% endif %}">{{animes.paginator.num_pages}}</a>
+                    </li>
+                    {% endif %} -->
+        
+                </ul>
+            </nav>
+        </div>
+    </section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}

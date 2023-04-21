@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" sizes="32x32" href="/media/icons/favicon-32x32.png">
+<link href="https://vjs.zencdn.net/7.17.0/video-js.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jwplayer.com/libraries/j2zqNSh2.js"></script>
+<script>jwplayer.key='joxybB3l';</script>
+
+
+<style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            .video {
+                width: 100%;
+                height: 100vh;
+            }
+        </style>
+</head>
+<body>
+<div id="video-player" class="video">Loading the player...</div>
+<script type="text/javascript">
+            jwplayer("video-player").setup({
+                file: "{{ raw_video }}"
+            });
+
+            const buttonId = 'download-video-button';
+            const iconPath = 'assets/download.svg';
+            const tooltipText = 'Download Video';
+
+            // Call the player's `addButton` API method to add the custom button
+            playerInstance.addButton(iconPath, tooltipText, buttonClickAction, buttonId);
+
+            // This function is executed when the button is clicked
+            function buttonClickAction() {
+              const playlistItem = playerInstance.getPlaylistItem();
+
+              // Create an anchor element
+              const anchor = document.createElement('a');
+
+              // Set the anchor's `href` attribute to the media's file URL
+              const fileUrl = playlistItem.file;
+              anchor.setAttribute('href', fileUrl);
+
+              // set the anchor's `download` attribute to the media's file name
+              const downloadName = playlistItem.file.split('/').pop();
+              anchor.setAttribute('download', downloadName);
+
+              // Set the anchor's style to hide it when it's added to the page
+              anchor.style.display = 'none';
+
+              // Add the anchor to the page
+              document.body.appendChild(anchor);
+
+              // Trigger a click event to activate the anchor
+              anchor.click();
+
+              // Remove the anchor from the page, it's not needed anymore
+              document.body.removeChild(anchor);
+            }
+        </script>
+</html>

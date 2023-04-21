@@ -1,0 +1,405 @@
+{% load static %}
+{% load tags %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/media/icons/favicon-32x32.png">
+  <meta name="robots" content="all, index, follow">
+  <meta name="theme-color" content="#1C1C1C">
+  <meta name="MobileOptimized" content="width">
+  <meta name="HandheldFriendly" content="true">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="theme-color" content="#f0b400" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#f0b400" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#f0b400">
+  <link rel="shortcut icon" href="/media/icons/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/media/icons/apple-touch-icon.png">
+  <link rel="apple-touch-startup-image" href="/media/icons/apple-touch-icon.png">
+  <link rel="mask-icon" href="/media/icons/safari-pinned-tab.svg" color="#484848">
+  <meta name="msapplication-TileColor" content="#ffc40d">
+  <meta name="msapplication-config" content="/media/icons/browserconfig.xml">
+  <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
+  <!-- <link rel="stylesheet" href="{% static 'css/refactor/base.css' %}"> -->
+  <!--CSS JS SCRIPTS para heredar-->
+  {% block head %}{% endblock %}
+  <script async
+    type="text/javascript"> (function () { var css = document.createElement('link'); css.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css'; css.rel = 'stylesheet'; css.type = 'text/css'; document.getElementsByTagName('head')[0].appendChild(css); })(); </script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <header>
+      <div class="header">
+        <div class="main-header">
+          <div class="titulo">
+            <!-- <div id="hamburger-icon" onclick="toggleMobileMenu(this)">
+              <div class="bar1 bar"></div>
+              <div class="bar2 bar"></div>
+              <div class="bar3 bar"></div>
+            </div> -->
+            <a href="/">
+              <img id="logoImg" src="/media/icons/logo_dark.png" alt="logo 127.0.0.1">
+            </a>
+          </div>
+
+          <!-- <button class="search-button">
+            <i class="fas fa-search"></i>
+          </button> -->
+
+          <div id="hamburger-icon" onclick="toggleMobileMenu(this)">
+            <div class="bar1 bar"></div>
+            <div class="bar2 bar"></div>
+            <div class="bar3 bar"></div>
+          </div>
+        </div>
+  
+        <nav class="mobile-menu" id="dropdown">
+          <div class="links">
+            <ul>
+              <li><a href="/"><i class="icon fas fa-home"></i>Inicio</a></li>
+              <li><a href="/directorio/"><i class="icon fas fa-folder"></i>Directorio</a></li>
+              <li><a href="/directorio/?tipo=1&idioma=2" rel="nofollow"><i class="icon fas fa-pepper-hot"></i>Anime Latino</a></li>
+            </ul>
+          </div>
+  
+          <div class="user-index">
+            
+            <div id="search">
+              <div class="search-content">
+                <form action="/directorio" method="GET" autocomplete="off">
+                  <a href="/random" class="random-icon">
+                    <i class="fas fa-random"></i>
+                  </a>
+                  <input id="search-form" type="text" class="form-control search-input" name="q" placeholder="Busca algo..." required="" value="{{ request.GET.q }}">
+                  <button type="submit" class="search-icon"><i class="fas fa-search"></i></button>
+                </form>
+        
+                <div class="results" id="search-results">
+                  <ul id="result-elements">
+                    <li class="error-message">
+                      <p>Debes ingresar al menos 3 letras</p>
+                    </li>
+                  </ul>
+        
+                  <div class="more-results" id="btn-more-results">
+                    <a href="">
+                      <button>
+                        <i class="icon fas fa-search"></i>
+                        <span>Ver más resultados</span>
+                      </button>
+                    </a>
+                  </div>
+                </div>
+        
+                <!-- <div class="nav search-result-pop" id="search-suggest" style="display: none;">
+                  <div class="loading-relative" id="search-loading" style="display: none;">
+                    <div class="loading">
+                      <div class="span1"></div>
+                      <div class="span2"></div>
+                      <div class="span3"></div>
+                    </div>
+                  </div>
+                  <div class="result" style="display:none;"></div>
+                </div> -->
+              </div>
+            </div>
+
+            <div class="header-icon">
+              {% if user.is_authenticated %}
+                  <button>
+                    <div class="user-icon">
+                      <!-- <img src="/media/icons/user.jpg" alt="user"> -->
+                      <img src="{% get_user_image request %}" alt="user_pic">
+                    </div>
+                  </button>
+                  <div class="dropdown-content">
+                    <div class="username">
+                      <p><i class="icon fas fa-user-check"></i>{{ user.username }}</p>
+                    </div>
+                    <a href="/cuenta/misfavoritos/"><i class="icon fas fa-heart"></i>Mis Favoritos</a></li>
+                    {% if user.is_staff %}
+                      <a href="/admin/"><i class="icon fas fa-user-shield"></i>Admin Panel</a>
+                    {% endif %}
+                    <a href="/cuenta/cerrar-sesion/?next={{ request.get_full_path }}" rel="nofollow"><i class="icon fas fa-sign-out-alt"></i>Cerrar Sesión</a>
+                  </div>
+              {% else %}
+                <button>
+                  <div class="user-icon">
+                    <i class="fas fa-user"></i>
+                  </div>
+                </button>
+                <div class="dropdown-content">
+                  <a href="/cuenta/iniciar_sesion/?next={{ request.get_full_path }}" rel="nofollow"><i class="icon fas fa-user"></i>Iniciar Sesión</a></li>
+                  <a href="/cuenta/registro/"><i class="icon fas fa-user-plus"></i>Registrarse</a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <script>
+      if (localStorage.getItem("light-mode") == "true") {
+        document.body.classList.remove("dark-mode");
+        document.body.classList.add("light-mode");
+        let header_img = document.getElementById("logoImg");
+        header_img.src = "/media/icons/logo_light.png";
+      }
+
+      // Deshabilitado hasta que chromium arregle su backdrop-filter de mrda
+
+      // if (!localStorage.getItem("backdrop-filter-header")) {
+      //   document.getElementsByTagName("header")[0].classList.add("backdrop-filter");
+      // } else {
+      //   if (localStorage.getItem("backdrop-filter-header") == "true") {
+      //     document.getElementsByTagName("header")[0].classList.add("backdrop-filter");
+      //   }
+      // }
+
+      if (localStorage.getItem("backdrop-filter-header")) {
+        if (localStorage.getItem("backdrop-filter-header") == "true") {
+          localStorage.setItem("backdrop-filter-header", "false");
+          document.getElementsByTagName("header")[0].classList.remove("backdrop-filter");
+        }
+      }
+    </script>
+
+
+  {% block content %}
+  {% endblock %}
+
+  <footer>
+    <div class="footer">
+      {% if request.path == "/" %}
+      <div class="main-footer">
+        <div class="text-content">
+          <h1>¿Donde ver anime gratis en HD? ¿Donde ver anime online FHD?</h1>
+          <p>
+            En el amplio y extenso mundo del internet hay muchas paginas donde puedes ver anime online gratis en HD,
+            pero en casi todas ellas debes soportar molestos anuncios los cuales aparecen cada vez que te mueves en la
+            página. Aquí en 127.0.0.1 te ofrecemos todo lo que disponen los otros sitios, pero sin anuncios. Esto mi
+            querido amigo es un gran agregado ya que te permite recorrer la página con mas facilidad en una interfaz
+            totalmente fluida, rápida y sin tanto condimento.
+          </p>
+        </div>
+        <div class="text-content">
+          <h2>Ver animes completos sin anuncios gratis</h2>
+          <p>En 127.0.0.1 somos serios, aquí no encontraras una página que busca lucrarse con molestos anuncios que al
+            primer click te redirige a una página basura. No nos interesa el dinero, sino el constante mantenimiento de
+            la comunidad de animes gratis.</p>
+          <p>Te encontraras con las temporadas completas de mas de 3500 animes, si… nuestro catalogo es muy extenso, mas
+            que el de Funanimation u otra página de paga. Aquí tienes todo gratis, de por vida, no tendrás que pagar
+            nada y eso es lo extraordinario de 127.0.0.1.</p>
+        </div>
+        <div class="text-content">
+          <h2>Mejores paginas para ver anime online</h2>
+          <p>Iniciamos con una pregunta… ¿Qué página es mejor para ver anime?, de seguro pensaste que te diríamos
+            127.0.0.1, pero la verdad es que la mejor página para ver anime es la que te guste más a ti. </p>
+          <p>Todos tenemos un amigo que nos dice, “lo mejor es descargar anime en FHD o 4k, así los ves en la mejor
+            calidad posible”, pero muchas veces esa no es una opción para nosotros ¿verdad?, muchas veces no tenemos el
+            almacenamiento suficiente, no tenemos internet decente o simplemente queremos ver ese capítulo nuevo que
+            estábamos esperando con tanto hype.</p>
+          <p>Aquí te ofrecemos justamente eso que quieres. Ver temporadas completas de tu anime favorito sin anuncios en
+            HD totalmente gratis.</p>
+        </div>
+        <div class="text-content">
+          <h2>¿Qué es el anime?</h2>
+          <p>El anime también escrito ánime y animé en español, es un estilo de animación tradicional o por computadora
+            de origen japonés.</p>
+          <p>Se caracteriza fundamentalmente por el uso particular de la llamada animación limitada, la expresión en
+            plano, la suspensión del tiempo, su amplitud temática, la presencia de referencias históricas, su compleja
+            línea narrativa y sobre todo, un peculiar estilo neotenico de dibujo, con personajes caracterizados por ojos
+            grandes y ovalados, de línea muy definida, colores llamativos y movimiento reducido de los labios.</p>
+          <p>Tradicionalmente es dibujado a mano y al principio los procesos realizados de forma digital eran muy
+            específicos (retoque y montaje). Sin embargo, en la actualidad las tareas más comunes dentro de la
+            producción de una animación, como podría ser el coloreado o los efectos visuales (brillos, sombras, luz
+            ambiental, etc.), se hacen con aplicaciones digitales, que permiten un mayor control sobre el trabajo y
+            ayudan a agilizar la labor de los dibujantes a niveles insospechados en un proceso de animación tradicional.
+            -Wikipedia</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="page-config">
+        <div class="button_component">
+          <p>Tema</p>
+          <button class="switch tema" id="btn-tema">
+            <span><i class="fas fa-sun"></i></span>
+            <span><i class="fas fa-moon"></i></span>
+          </button>
+        </div>
+
+        <!--Deshabilitado hasta que chromium arregle su backdrop-filter de mrda-->
+
+        <!-- <div class="button_component">
+          <p>Transparencia</p>
+          <button class="switch header" id="btn-header-change">
+            <span><i class="fas fa-tint"></i></span>
+            <span><i class="fas fa-tint-slash"></i></span>
+          </button>
+        </div> -->
+      </div>
+
+      <div class="redes-sociales">
+        <h2 style="text-align: center; margin: 10px 0 10px 0;">Redes Sociales</h2>
+        <ul>
+          <a href="https://www.facebook.com/127.0.0.1hd/" target="_blank">
+            <li><i class="fab fa-facebook"></i></li>
+          </a>
+          <a href="https://twitter.com/127.0.0.1cl" target="_blank">
+            <li><i class="fab fa-twitter"></i></li>
+          </a>
+          <a href="https://www.instagram.com/127.0.0.1cl/" target="_blank">
+            <li><i class="fab fa-instagram"></i></li>
+          </a>
+          <a href="" target="_blank">
+            <li><i class="fab fa-discord"></i></li>
+          </a>
+        </ul>
+      </div>
+      <div class="copyright-footer">
+        <p>Ningún video esta alojado en nuestros servidores, estos se reproducen desde fuentes de terceros.</p>
+        <br>
+        <a href="/politica-de-privacidad/">Política de Privacidad</a> | <a
+          href="/condiciones-del-servicio/">Condiciones del Servicio</a>
+        <br>
+        <br>
+        <p>
+          © 2022 | <a href="/">127.0.0.1</a> | <a href="/contacto/">Contacto</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const search_form = document.getElementById('search-form');
+    const search_results = document.getElementById('search-results');
+    const ul_search = document.getElementById('result-elements');
+    const btn_more_results = document.getElementById('btn-more-results');
+
+    window.addEventListener('click', (e) => {
+      if (search_form.contains(e.target)) {
+        search_results.style.display = 'block';
+      } else {
+        search_results.style.display = 'none';
+      }
+    });
+
+    //crea un listener para cada vez que se escribe en el search_form
+    search_form.addEventListener('keyup', (e) => {
+      //obtiene el valor del search_form
+      const search_value = e.target.value;
+      //si el valor es vacio, no hace nada
+      if (search_value === '') {
+        ul_search.innerHTML = '';
+        let li = document.createElement('li');
+        li.innerHTML = `
+        <li class="error-message">
+          <p>Debes ingresar al menos 3 letras</p>
+        </li>
+      `;
+        ul_search.appendChild(li);
+        btn_more_results.style.display = 'none';
+        return;
+      } else if (search_value.length > 2) {
+        fetch('/api/search/' + search_value)
+          .then(response => response.json())
+          .then(data => {
+            ul_search.innerHTML = '';
+            console.log(data);
+            data.map(element => {
+              const li = document.createElement('li');
+              if (element.error) {
+                li.innerHTML = `
+              <li class="error-message">
+                <p>No se encontró nada</p>
+              </li>
+            `;
+                //append the li to the ul
+                ul_search.appendChild(li);
+              } else {
+                const anime_title = element.nombre;
+                const anime_img = element.imagen;
+                const anime_link = element.link;
+                const anime_tipo = element.tipo;
+                const anime_estreno = element.estreno;
+
+                li.innerHTML = `
+                <article>
+                  <a href="${anime_link}">
+                    <div class="imagen">
+                      <figure>
+                        <img src="${anime_img}" alt="${anime_title}">
+                      </figure>
+                    </div>
+                    <div class="info">
+                      <p>${anime_title}</p>
+                      <div class="meta">
+                        <span class="tipo">${anime_tipo}</span>
+                        <span class="estreno">${anime_estreno}</span>
+                      </div>
+                    </div>
+                  </a>
+                </article>
+              `;
+                ul_search.appendChild(li);
+
+                const a = btn_more_results.querySelector('a');
+                a.href = "/directorio/?q=" + search_value;
+                btn_more_results.style.display = 'block';
+              }
+            });
+          });
+      }
+
+    });
+
+  </script>
+
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4905CS7BL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-J4905CS7BL');
+  </script> -->
+
+  <script src="{% static 'js/main.js' %}"></script>
+
+
+  {% if not user.is_authenticated %}
+  <!-- <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <div id="g_id_onload" data-client_id="794391457634-hir3992fbb6tru79tm66gdog4v084bdg.apps.googleusercontent.com"
+    data-login_uri="http://127.0.0.1/google_one_tap_login/" data-your_own_param_1_to_login="any_value"
+    data-your_own_param_2_to_login="any_value">
+  </div>
+
+  <script>
+    window.addEventListener('load', function () {
+      var observer = new MutationObserver(function (mutations) {
+        if (document.getElementById('credential_picker_iframe')) {
+
+          document.getElementById('credential_picker_iframe').style.zIndex = 2147483647;
+          observer.disconnect();
+        } else if (document.getElementById('credential_picker_container')) {
+          document.getElementById('credential_picker_container').style.zIndex = 2147483647;
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    });
+  </script> -->
+  {% endif %}
+</body>
+
+</html>

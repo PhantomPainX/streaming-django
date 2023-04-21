@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load socialaccount %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/refactor/formularios.css' %}">
+    <title>Registro | 127.0.0.1</title>
+{% endblock %}
+
+{% block content %}
+
+<main>
+    <div class="center-container">
+        <div class="form-wrapper">
+            <div class="form-image">
+                <img class="img-accounts" src="/media/icons/android-chrome-512x512.png" alt="logo 127.0.0.1" width="150px" height="150px">
+            </div>
+            <div class="form-title">
+                <h1>Registrar Cuenta</h1>
+            </div>
+            {% if form.errors %}
+                <div class="form-errors">
+                    {% if form.errors.username %}
+                        {{ form.errors.username }}
+                    {% endif %}
+                    {% if form.errors.email %}
+                        {{ form.errors.email }}
+                    {% endif %}
+                    {% if form.errors.password2 %}
+                        {{ form.errors.password2 }}
+                    {% endif %}
+                </div>
+            {% endif %}
+            <div class="form-content">
+                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                <form action="" method="POST" id="form">
+                    {% csrf_token %}
+                    {{ form.username }}
+                    {{ form.email }}
+                    {{ form.password1 }}
+                    {{ form.password2 }}
+                    <div class="g-recaptcha" data-sitekey="6LcevyMeAAAAAAOVCuzUblGPgcTT1VIEP9UrT4Jx" data-callback="enableBtn"></div>
+                    <p id="mensaje">Verifica que eres humano</p>
+                    <input style="background-color: #b5b5b5;" value="Crear Cuenta" type="submit" id="submit_details" disabled>
+                </form>
+            </div>
+
+            <p style="color: #FFF;">o</p>
+
+            <form action="{% provider_login_url 'google' %}" method="POST">
+                {% csrf_token %}
+                <button class="googleBtn" type="submit">
+                    <img src="/media/icons/google-logo.png" alt="Google Logo">
+                    <p>Registrate con Google</p>
+                </button>
+            </form>
+
+            <div class="form-links">
+                <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}" rel="nofollow">Inicia sesión aquí</a></p>
+            </div>
+
+            <p class="consentimiento">Al registrarte aceptas la <a href="{% url 'politica-de-privacidad' %}">Política de Privacidad</a> 
+            y nuestras <a href="{% url 'condiciones-del-servicio' %}">Condiciones del Servicio</a></p>
+        </div>
+    </div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'js/forms.js' %}"></script>
+
+{% endblock %}

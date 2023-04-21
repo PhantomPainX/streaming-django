@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <meta name="description" content="{{ description }}">
+
+    <meta property="og:site_name" content="127.0.0.1">
+    <meta property="og:url" content="{{ request.get_full_path }}">
+    <meta property="og:type" content="video">
+    <!-- <meta property="og:image" content="/media/{{anime.imagen}}"> -->
+    <meta property="og:title" content="{{ title }} - 127.0.0.1">
+    <meta property="og:description" content="{{ description }}">
+    <title>{{ title }} | 127.0.0.1</title>
+{% endblock %}
+
+{% block content %}
+
+<main>
+    <div class="path-error">
+        <div class="imagen">
+            <img loading="lazy" src="/media/errores/en_construccion.png" width="100px" height="100px" alt="en_construccion">
+        </div>
+        <div class="contenido">
+            <h1>La página de {{ title }} esta en construcción.</h1>
+            <p>Gracias por seguir viendo anime con nosotros :D</p>
+            <p>Presiona <a href="{% url 'home' %}">aqui</a> para volver al inicio.</p>
+        </div>
+    </div>
+</main>
+{% endblock %}

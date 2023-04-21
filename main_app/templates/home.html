@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <meta name="description" content="Mira Anime Subtitulado totalmente gratis en una página rápida sin anuncios invasivos. Nuestro tema es amigable con tus ojos.">
+    <meta name="keywords" content="anime online español, anime online gratis, anime online naruto, anime online naruto shippuden, anime online sub español, anime online free, anime online latino, anime online bleach, animes, anime, ecchi, anime online, Naruto Shippuden, Anime online, Anime en Descarga Directa, Ver Anime Online">
+
+    <meta property="og:site_name" content="127.0.0.1">
+    <meta property="og:title" content="Mira anime sub en español sin anuncios en HD">
+    <meta property="og:url" content="http://127.0.0.1">
+    <meta property="og:type" content="video">
+    <meta property="og:image" content="/media/icons/android-chrome-192x192.png">
+    <meta property="og:description" content="Mira Anime Subtitulado totalmente gratis en una página rápida sin anuncios invasivos. Nuestro tema es amigable con tus ojos.">
+    <link rel="canonical" href="http://127.0.0.1">
+    <title>Anime Online Sub en Español - 127.0.0.1</title>
+    <!-- <link rel="stylesheet" href="{% static 'css/refactor/home.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'css/refactor/home.css' %}">
+    <link rel="manifest" href="/manifest.json">
+    <script async type="text/javascript"> (function() { var css = document.createElement('link'); css.href = 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css'; css.rel = 'stylesheet'; css.type = 'text/css'; document.getElementsByTagName('head')[0].appendChild(css); })(); </script>
+    <meta name="exoclick-site-verification" content="e47cf449ac1ddbd494db65ced590dcc4">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"> -->
+{% endblock %}
+
+{% block content %}
+
+<div class="carrusel-wrapper2">
+    <div class="carrusel2 owl-carousel">
+        {% for anime in ultimos_en_emision %}
+        <div class="card2">
+            <img class="blur-background" src="/media/{{anime.imagen}}" alt="{{ anime.nombre }}">
+            <div class="image-container">
+                <figure>
+                    <img loading="lazy" class="skeleton" src="/media/{{anime.imagen}}" alt="{{ anime.nombre }}">
+                </figure>
+            </div>
+
+            <div class="content-container">
+                <div class="n-emision">
+                    <span>
+                        #{{ forloop.counter }} En Emisión
+                    </span>
+                </div>
+
+                <div class="anime-title">
+                    <h2>{{ anime.nombre }}</h2>
+                </div>
+
+                <div class="meta">
+                    <span class="item bl">{{ anime.tipo.tipo }}</span>
+                        <span class="dot"></span>
+                        <span class="item br">{{ anime.estreno }}</span>
+                        
+                        <!-- {% if anime.tipo.tipo is not "Película" %}
+                            {% if total_episodios > 1 %}
+                                <span class="dot"></span>
+                                <span class="item">Eps: {{anime.episodios.count}}</span>
+                            {% endif %}
+                        {% endif %} -->
+                </div>
+
+                <div class="sinopsis">
+                    <p>{{ anime.sinopsis }}</p>
+                </div>
+
+                <div class="buttons">
+                    <a href="/ver/{{anime.slug}}-1">
+                        <button class="ver">
+                            <i class="fas fa-play"></i>
+                            <span>Ver Ahora</span>
+                        </button>
+                    </a>
+                    <a href="{{anime.get_absolute_url}}">
+                        <button class="detalle">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Episodios</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script>
+    var owl = $('.carrusel2');
+    owl.owlCarousel({
+        autoHeight: true,
+        loop: false,
+        rewind: true,
+        autoplay: true,
+        autoplayTimeout: 8000,
+        autoplayHoverPause: true,
+        items: 1
+    });
+
+    owl.on('change.owl.carousel', function(event) {
+
+        $('.owl-item').not('.active').find('.blur-background').css('filter', 'none');
+        if (event.item.index == (22 - 1)) {
+            $('.owl-item').not('.active').find('.blur-background').css('filter', 'blur(40px) saturate(260%)');
+        }
+        $('.owl-item.active').next().find('.blur-background').css('filter', 'blur(40px) saturate(260%)');
+        $('.owl-item.active').prev().find('.blur-background').css('filter', 'blur(40px) saturate(260%)');
+
+    });
+
+    owl.on('drag.owl.carousel', function(event) {
+        $('.owl-item').not('.active').find('.blur-background').css('filter', 'none');
+        $('.owl-item.active').next().find('.blur-background').css('filter', 'blur(40px) saturate(260%)');
+        $('.owl-item.active').prev().find('.blur-background').css('filter', 'blur(40px) saturate(260%)');
+    });
+
+</script>
+
+<div class="main__wrapper">
+
+    <div class="boton-random-container">
+        <a href="/random" class="boton-random">
+            <i class="icon fas fa-random"></i><span>Aleatorio</span>
+        </a>
+    </div>
+
+    <!-- <div class="text-card yellow-card">
+        <div class="title">
+          <h2>Actualizamos nuestra Política de Privacidad y Condiciones del Servicio</h2>
+        </div>
+
+        <div class="content">
+            <p>
+                Hemos actualizado nuestra Política de Privacidad y Condiciones del Servicio con fecha 2 de noviembre del 2022. Estos cambios entran en vigor el mismo día de su publicación.
+            </p>
+
+            <p>
+                Al seguir usando el Servicio, queda estipulado que aceptas los cambios en la <a href="{% url 'politica-de-privacidad' %}">Política de Privacidad</a> y <a href="{% url 'condiciones-del-servicio' %}">Condiciones del Servicio</a>.
+            </p>
+        </div>
+    </div> -->
+
+    <div class="main__content">
+        <div class="secciones">
+            <section>
+                <div class="titulo flex">
+                    <h2><i class="icon fas fa-burn icon-pink"></i>Últimos Episodios</h2>
+                    <a href="/ultimos-episodios/" class="boton-random">
+                        <i class="icon fas fa-plus" style="margin-right: 2px"></i> Más
+                    </a>
+                </div>
+                <ul class="grid-animes">
+                    {% for episodio in ultimos_episodios %}
+                    <li>
+                        <article>
+                            <a href="{{episodio.get_absolute_url}}">
+                                <figure>
+                                    <div class="bottom">
+                                        <img class="idioma-thumbnail" src="/media/{{ episodio.anime.idioma.thumbnail }}" alt="{{ anime.idioma.idioma }}">
+                                        <div class="figure-title">
+                                            <p class="yellow">
+                                                Episodio {{episodio.numero}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="main-img">
+                                        <img loading="lazy" class="skeleton" src="media/{{episodio.anime.imagen}}" alt="{% autoescape off %}{{episodio.anime.nombre}}{% endautoescape %}">
+                                    </div>
+                                </figure>
+                                <div class="article-title">
+                                    {% autoescape off %}
+                                        <p>{{ episodio.anime.nombre }}</p>
+                                    {% endautoescape %}
+                                </div>
+                            </a>
+                        </article>
+                    </li>
+                    {% endfor %}
+        
+                </ul>
+            </section>
+        
+            <section>
+                <div class="titulo flex">
+                    <h2><i class="icon fas fa-burn icon-yellow"></i>Últimos Animes</h2>
+                    <a href="/directorio/?estreno=2022" rel="nofollow" class="boton-random">
+                        <i class="icon fas fa-plus" style="margin-right: 2px"></i> Más
+                    </a>
+                </div>
+                <ul class="grid-animes">
+                    {% for anime in animes %}
+                    <li>
+                        <article>
+                            <a href="{{anime.get_absolute_url}}">
+                                <figure>
+                                    <span class="tipo">{{ anime.tipo }}</span>
+                                    <span class="estreno">{{ anime.estreno }}</span>
+                                    <div class="bottom">
+                                        <img class="idioma-thumbnail" src="/media/{{ anime.idioma.thumbnail }}" alt="{{ anime.idioma.idioma }}">
+                                        <div class="figure-title">
+                                            <p class="gray">{{ anime.estado.estado }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="main-img">
+                                        <img loading="lazy" class="skeleton" src="media/{{anime.imagen}}" alt="{% autoescape off %}{{anime.nombre}}{% endautoescape %}">
+                                    </div>
+                                </figure>
+                                <div class="article-title">
+                                    {% autoescape off %}
+                                        <p>{{ anime.nombre }}</p>
+                                    {% endautoescape %}
+                                </div>
+                            </a>
+                        </article>
+                    </li>
+                    {% endfor %}
+        
+                </ul>
+            </section>
+
+            <section>
+                <div class="titulo flex">
+                    <h2><i class="icon fas fa-burn icon-yellow"></i>Últimos en Latino</h2>
+                    <a href="/directorio/?idioma=2" rel="nofollow" class="boton-random">
+                        <i class="icon fas fa-plus" style="margin-right: 2px"></i> Más
+                    </a>
+                </div>
+                <ul class="grid-animes">
+                    {% for serie in series %}
+                    <li>
+                        <article>
+                            <a href="{{serie.get_absolute_url}}">
+                                <figure>
+                                    <span class="tipo">{{ serie.tipo }}</span>
+                                    <span class="estreno">{{ serie.estreno }}</span>
+                                    <div class="bottom">
+                                        <img class="idioma-thumbnail" src="/media/{{ serie.idioma.thumbnail }}" alt="{{ serie.idioma.idioma }}">
+                                        <div class="figure-title">
+                                            <p class="gray">{{ serie.estado.estado }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="main-img">
+                                        <img loading="lazy" class="skeleton" src="/media/{{serie.imagen}}" alt="{% autoescape off %}{{serie.nombre}}{% endautoescape %}">
+                                    </div>
+                                </figure>
+                                <div class="article-title">
+                                    {% autoescape off %}
+                                        <p>{{ serie.nombre }}</p>
+                                    {% endautoescape %}
+                                </div>
+                            </a>
+                        </article>
+                    </li>
+                    {% endfor %}
+        
+                </ul>
+            </section>
+        </div>
+
+        <div class="side__content">
+
+            <a href="https://play.google.com/store/apps/details?id=com.127.0.0.1.application" target="_blank">
+                <div class="image-card playstore-card">
+                    <div class="image">
+                        <img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Google_Play_Prism.max-1100x1100.png" alt="logo playstore">
+                    </div>
+                    <div class="content">
+                        <h2>¡Descarga nuestra aplicación!</h2>
+                        <p>Es gratis y siempre lo será</p>
+                        <p>Recargado con más fuentes de video y Chromecast</p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" target="_blank">
+                <div class="image-card discord-card">
+                    <div class="image">
+                        <img src="https://logodownload.org/wp-content/uploads/2017/11/discord-logo-4-1.png" alt="discord">
+                    </div>
+                    <div class="content">
+                        <h2>¡Únete a nuestro nuevo Discord!</h2>
+                        <p>Buscamos moderadores y administradores</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- <div data-nat="18387"></div>
+
+            <div data-clickadilla-banner="61552"></div> -->
+        
+            <div data-mc-src="97981d29-b7cc-490a-bc06-1ed25ddfc397#null"></div>
+            <script 
+            src="https://cdn2.woxo.tech/a.js#62e1b03fe873e3d71bd00c8d" 
+            async data-usrc>
+            </script>
+
+            <div class="ultimas__noticias">
+                <div class="article-title" style="margin-bottom: 0px !important">
+                    <h2><i class="icon far fa-newspaper"></i>Últimas Noticias</h2>
+                </div>
+
+                <div class="articulos" id="bloque_noticias">
+                    
+                </div>
+            </div>
+            <section class="section">
+                <div class="titulo">
+                    <h2><i class="icon fas fa-comments"></i>Comentarios</h2>
+                </div>
+                <div class="comentarios">
+                    <button class="boton-expandible comentario" id="abrir-comentarios" onclick="abrirComentarios(this)">Mostrar Comentarios</button>
+                </div>
+                <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/index.js' %}"></script>
+{% endblock %}

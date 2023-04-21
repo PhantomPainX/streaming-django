@@ -1,0 +1,26 @@
+{
+    "name": "127.0.0.1",
+    "short_name": "127.0.0.1",
+    "description": "Mira Anime Subtitulado totalmente gratis sin ads en 127.0.0.1!",
+    "background_color": "#2B2B2B",
+    "theme_color": "#1C1C1C",
+    "display": "standalone",
+    "start_url": "/",
+    "background": {
+      "service_worker": "sw.js",
+      "type": "module"
+    },
+    "lang": "es",
+    "icons": [
+      {
+          "src": "/media/icons/android-chrome-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+      },
+      {
+          "src": "/media/icons/android-chrome-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+      }
+  ]
+}

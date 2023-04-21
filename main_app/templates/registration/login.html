@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load socialaccount %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/refactor/formularios.css' %}">
+    <title>Iniciar Sesión | 127.0.0.1</title>
+{% endblock %}
+
+{% block content %}
+
+<main>
+    <div class="center-container">
+        <div class="form-wrapper">
+            <div class="form-image">
+                <img class="img-accounts" src="/media/icons/android-chrome-512x512.png" alt="logo 127.0.0.1" width="150px" height="150px">
+            </div>
+            <div class="form-title">
+                <h1>Iniciar Sesión</h1>
+            </div>
+                {% if error %}
+                    <div class="form-errors">
+                        <ul>
+                            <li>{{ error }}</li>
+                        </ul>
+                    </div>
+                {% endif %}
+            <div class="form-content">
+                <form action="" method="POST" id="form">
+                    {% csrf_token %}
+                    <input type="text" name="user_email" placeholder="Usuario o Email" required>
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                    <input value="Ingresar" type="submit" id="submit_details">
+                </form>
+            </div>
+
+            <p style="color: #FFF;">o</p>
+
+            <form action="{% provider_login_url 'google' %}" method="POST">
+                {% csrf_token %}
+                <button class="googleBtn" type="submit">
+                    <img src="/media/icons/google-logo.png" alt="Google Logo">
+                    <p>Inicia sesión con Google</p>
+                </button>
+            </form>
+
+            <div class="form-links">
+                <p><a href="/cuenta/password_reset/">Olvidé mi usuario o contraseña</a></p>
+                <p>¿No tienes cuenta? <a href="{% url 'registro' %}" rel="nofollow">¡Regístrate aquí!</a></p>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'js/forms.js' %}"></script>
+
+{% endblock %}

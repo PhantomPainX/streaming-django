@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+    
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/refactor/formularios.css' %}">
+    <title>Reporte - 127.0.0.1</title>
+{% endblock %}
+
+{% block content %}
+
+<main>
+    {% if request.method == 'GET' %}
+        <div class="center-container">
+            <div class="form-wrapper">
+                <div class="form-image">
+                    <img loading="lazy" src="/media/icons/advertencia.png" alt="Advertencia" width="100px" height="100px">
+                </div>
+                <div class="form-title">
+                    <h1>Reporta un video que no sirve</h1>
+                </div>
+                <div class="form-description">
+                    {% autoescape off %}
+                        <p>{{ episodio.anime.nombre }}</p>
+                    {% endautoescape %}
+                    <p>Episodio {{ episodio.numero }}</p>
+                    <hr>
+                </div>
+                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                <div class="form-content">
+                    <form action="/reporte/" method="POST" id="form">
+                        {% csrf_token %}
+                        <select name="embed" id="embedid" required="true">
+                            <option value="" disabled selected hidden>Selecciona la fuente</option>
+                            {% for embed in embeds %}
+                                <option value="{{embed.id}}">{{embed.embed}}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="g-recaptcha" data-sitekey="6LcevyMeAAAAAAOVCuzUblGPgcTT1VIEP9UrT4Jx" data-callback="enableBtn"></div>
+                        <p id="mensaje">Verifica que eres humano</p>
+                        <input style="background-color: #b5b5b5;" value="Enviar" type="submit" id="submit_details" disabled>
+                        <div class="form-links">
+                            <a href="{{ episodio.get_absolute_url }}">Volver al episodio.</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% elif request.method == 'POST' %}
+        <div class="center-container">
+            <div class="form-wrapper">
+                <div class="form-image">
+                    <img loading="lazy" src="/media/icons/exitoso.png" alt="Exitoso" width="100px" height="100px">
+                </div>
+                <div class="form-title">
+                    <h1>Reporte exitoso</h1>
+                </div>
+                <div class="form-description">
+                    {% autoescape off %}
+                        <p>Nombre: {{ episodio.anime.nombre }}</p>
+                    {% endautoescape %}
+                    <p>Episodio: {{ episodio.numero }}</p>
+                    <p>Fuente de video: {{ embed.embed }}</p>
+                </div>
+                <div class="form-links">
+                    <a href="{{ episodio.get_absolute_url }}">Volver al episodio</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'js/forms.js' %}"></script>
+{% endblock %}

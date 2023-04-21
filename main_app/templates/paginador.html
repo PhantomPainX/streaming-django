@@ -1,0 +1,39 @@
+<div class="paginador-container">
+    <nav>
+        <ul class="pagination">
+
+            <!-- <li class="page-item {% if not animes.has_previous %} disabled {% endif %}">
+                <a class="page-link" href="?p=1&q={{q}}" tabindex="-1">Primera</a>
+            </li> -->
+            <li class="page-item {% if not animes.has_previous %} disabled {% endif %}">
+                <a class="page-link" rel="nofollow" href="{% if animes.has_previous %}?p={{ animes.previous_page_number }}{% endif %}{% for data in data_list %}{{ data }}{% endfor %}" tabindex="-1">&laquo;</a>
+            </li>
+
+            <!-- {% if animes.number|add:'-2' > 1 %}
+                <li class="page-item disabled"><a class="page-link" href="?p={{ animes.number|add:'-3' }}">&hellip;</a></li>
+            {% endif %} -->
+
+            {% for i in animes.paginator.page_range %}
+                {% if animes.number == i %}
+                    <li class="active page-item active"><a class="page-link" rel="nofollow" href="?p={{ i }}{% for data in data_list %}{{ data }}{% endfor %}">{{ i }}</a></li>
+                {% elif i > animes.number|add:'-3' and i < animes.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" rel="nofollow" href="?p={{ i }}{% for data in data_list %}{{ data }}{% endfor %}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            <!-- {% if animes.paginator.num_pages > animes.number|add:'2' %}
+                <li class="page-item disabled"><a class="page-link" href="?p={{ animes.number|add:'3' }}">&hellip;</a></li>
+            {% endif %} -->
+
+            <li class="page-item {% if not animes.has_next %} disabled {% endif %}">
+                <a class="page-link" rel="nofollow" href="{% if animes.has_next %} ?p={{ animes.next_page_number }}{% endif %}{% for data in data_list %}{{ data }}{% endfor %}">&raquo;</a>
+            </li>
+            <!-- {% if animes.paginator.num_pages != 1 %}
+            <li class="page-item {% if not animes.has_next %} disabled {% endif %}">
+                <a class="page-link" href="{% if animes.has_next %} ?p={{ animes.paginator.num_pages }}  {% endif %}">{{animes.paginator.num_pages}}</a>
+            </li>
+            {% endif %} -->
+
+        </ul>
+    </nav>
+</div>

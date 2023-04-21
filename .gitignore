@@ -1,0 +1,7 @@
+/static/*
+.DS_Store
+*.pyc
+*/migrations/*
+*.webp
+*.png
+*.gif

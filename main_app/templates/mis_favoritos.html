@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <meta name="description" content="Mira y guarda tus animes favoritos en 127.0.0.1. ¡Registrate gratis!">
+
+    <meta property="og:site_name" content="127.0.0.1">
+    <meta property="og:title" content="Mis Favoritos">
+    <meta property="og:url" content="http://127.0.0.1/cuenta/misfavoritos/">
+    <meta property="og:type" content="video">
+    <meta property="og:image" content="/media/icons/android-chrome-192x192.png">
+    <meta property="og:description" content="Mira y guarda tus animes favoritos en 127.0.0.1. ¡Registrate gratis!">
+    <link rel="canonical" href="http://127.0.0.1/cuenta/misfavoritos/">
+    <link rel="stylesheet" href="{% static 'css/refactor/favoritos.css' %}">
+    <title>Mis Favoritos - 127.0.0.1</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="main__wrapper" id="main-section">
+
+    <div class="main__content">
+        <div class="secciones">
+            <section style="margin-bottom: 0;">
+                <div class="titulo flex titulo-favoritos">
+                    <h2><i class="icon fas fa-heart icon-red"></i>Mis Favoritos</h2>
+                    <div class="detalle">
+                        <span class="fav-count"><i class="icon fas fa-heart"></i><div id="fav-count">0</div></span>
+                        <span class="dot"></span>
+                        <span><i class="icon fas fa-eye"></i><div id="ep-count">0</div></span>
+                        <span class="dot"></span>
+                        <span>
+                            <button class="btn-icon" id="actualizar-favoritos"><i class="fas fa-redo"></i></button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="text-card grey-card no-mostrar" id="card-no-favs"></div>
+
+                <div class="cargando hidden" id="roller">
+                    <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                    <h3>Cargando favoritos...</h3>
+                </div>
+                <ul class="grid-animes favoritos" id="favoritos">
+                </ul>
+
+                <div class="paginador-container paginador-favoritos" id="paginador-wrapper">
+                    <nav>
+                        <ul class="pagination" id="paginador-ul">
+                
+                        </ul>
+                    </nav>
+                </div>
+                <div class="cargando-below hidden" id="roller-below">
+                    <div class="spinner"></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="side__content">
+
+            <a href="https://play.google.com/store/apps/details?id=com.127.0.0.1.application" target="_blank">
+                <div class="image-card playstore-card">
+                    <div class="image">
+                        <img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Google_Play_Prism.max-1100x1100.png" alt="logo playstore">
+                    </div>
+                    <div class="content">
+                        <h2>¡Descarga nuestra aplicación!</h2>
+                        <p>Es gratis y siempre lo será</p>
+                        <p>Recargado con más fuentes de video y Chromecast</p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" target="_blank">
+                <div class="image-card discord-card">
+                    <div class="image">
+                        <img src="https://logodownload.org/wp-content/uploads/2017/11/discord-logo-4-1.png" alt="discord">
+                    </div>
+                    <div class="content">
+                        <h2>¡Únete a nuestro nuevo Discord!</h2>
+                        <p>Buscamos moderadores y administradores</p>
+                    </div>
+                </div>
+            </a>
+
+            <div id="animes-right-side">
+                <div class="titulo">
+                    <h2><i class="icon fas fa-burn icon-yellow"></i>Te podría interesar</h2>
+                </div>
+                <div class="articulos" style="max-height: 570px;">
+                    {% for anime in animes_aleatorios %}
+                    <a href="{% if anime.tipo.tipo == 'TV' or anime.tipo.tipo == 'OVA' or anime.tipo.tipo == 'Película' or anime.tipo.tipo == 'Especial' %}{{anime.get_absolute_url}}{% else %}{{anime.get_latino_url}}{% endif %}">
+                        <article>
+                            <div class="imagen">
+                                <figure>
+                                    <img loading="lazy" class="skeleton" src="/media/{{anime.imagen}}" alt="{% autoescape off %}{{anime.nombre}}{% endautoescape %}">
+                                </figure>
+                            </div>
+        
+                            <div class="contenido">
+                                <span>{{anime.tipo}}</span>
+                                {% autoescape off %}
+                                    <h3>{{anime.nombre}}</h3>
+                                {% endautoescape %}
+                                <span>{{anime.estado.estado}}</span>
+                            </div>
+                        </article>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% if user.is_authenticated %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'js/funciones.js' %}"></script>
+    <script src="{% static 'js/Usuario.js' %}"></script>
+    <script src="{% static 'js/mis_favoritos.js' %}"></script>
+{% endif %}
+{% endblock %}

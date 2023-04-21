@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block head %}
+    <meta name="description" content="ver {{anime.nombre}} online en HD, ver episodios de {{anime.nombre}}, ver lista de episodios de {{anime.nombre}} online">
+    <meta name="keywords" content="{{anime.nombre}} online, ver {{anime.nombre}}, ver anime online, ver gratis, HD">
+
+    <meta property="og:site_name" content="127.0.0.1">
+    <meta property="og:url" content="http://127.0.0.1{{anime.get_absolute_url}}">
+    <meta property="og:type" content="video">
+    <meta property="og:image" content="/media/{{anime.imagen}}">
+    <meta property="og:title" content="Ver {{ anime.nombre }} online en HD - 127.0.0.1">
+    <meta property="og:description" content="{{anime.sinopsis}}">
+    <title>Ver {{ anime.nombre }} online en HD - 127.0.0.1</title>
+    <script>
+        try {
+            fetch('https://api.jikan.moe/v3/search/anime?q={{ anime.nombre }}')
+            .then(response => response.json())
+            .then(json => {
+                var noDisponible = true;
+                for (let i = 0; i < json.results.length; i++) {
+                    let title = json.results[i].title.toLowerCase();
+                    let anime = '{{ anime.nombre }}'.toLowerCase();
+                    if (title == anime) {
+                        if (json.results[i].rated == null) {
+                            document.getElementById('clasificacion').innerHTML = '<strong>Clasificación:</strong> ' + "No Disponible Aún";
+                            document.getElementById('nota').innerHTML = '<strong>Nota:</strong> ' + "No Disponible Aún";
+                        } else {
+                            document.getElementById('clasificacion').innerHTML = '<strong>Clasificación:</strong> ' + json.results[i].rated;
+                            document.getElementById('nota').innerHTML = '<strong>Nota:</strong> ' + json.results[i].score;
+                        }
+                        noDisponible = false;
+                        break;
+                    }
+                }
+                if (noDisponible) {
+                    document.getElementById('clasificacion').innerHTML = '<strong>Clasificación:</strong> ' + "No Disponible";
+                    document.getElementById('nota').innerHTML = '<strong>Nota:</strong> ' + "No Disponible";
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            document.getElementById('clasificacion').innerHTML = '<strong>Clasificación:</strong> ' + "No Disponible";
+            document.getElementById('nota').innerHTML = '<strong>Nota:</strong> ' + "No Disponible";
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .blur-wrap {
+        background: #1c1c1c;
+        border-radius: 20px;
+    }
+
+    @supports (backdrop-filter: blur(50px)) or (-webkit-backdrop-filter: blur(50px)) {
+
+        .section-banner {
+            background-image: url('/media/{{anime.imagen}}');
+            background-size:cover;
+        }
+
+        .blur-wrap {
+            background-color: rgba(0, 0, 0, 0.45);
+            -webkit-backdrop-filter: blur(50px);
+            backdrop-filter: blur(50px);
+            border-radius: 20px;
+        }
+    }
+</style>
+
+<main>
+
+    <div class="indice">
+        <p>
+            <a href="/">
+                Inicio 
+            </a>
+            /
+            {% if anime.tipo.tipo == "TV" %}
+                <a href="/directorio/?tipo=1">
+                    TV 
+                </a>
+            {% elif anime.tipo.tipo == "OVA" %}
+                <a href="/directorio/?tipo=3">
+                    Ovas 
+                </a>
+            {% elif anime.tipo.tipo == "Película" %}
+                <a href="/directorio/?tipo=2">
+                    Películas 
+                </a>
+            {% elif anime.tipo.tipo == "Especial" %}
+                <a href="/directorio/?tipo=4">
+                    Especiales 
+                </a>
+            {% else %}
+                <a href="/directorio/">
+                    Animes 
+                </a>
+            {% endif %}
+            /
+            <a href="{{ anime.get_absolute_url }}">
+                {{ anime.nombre }} 
+            </a>
+        </p>
+    </div>
+
+    <div class="section-banner">
+        <div class="blur-wrap">
+            <div class="contenedor-banner">
+                <aside class="banner-img">
+                    <img class="skeleton" src="/media/{{ anime.imagen }}" alt="{{ anime.nombre }}">
+                </aside>
+                <aside class="banner-info">
+                    <h1>{{ anime.nombre }}</h1>
+                    <p class="sinopsis">{{ anime.sinopsis }}</p>
+                
+                    <p class="caracteristicas">
+                        <strong>Estado:</strong> 
+                        <a href="/directorio/?estado={{ anime.estado.id }}">{{ anime.estado }}</a>
+                    </p>
+                    <p class="caracteristicas">
+                        <strong>Estreno:</strong> 
+                        <a href="/directorio/?estreno={{ anime.estreno }}">{{ anime.estreno }}</a>
+                    </p>
+                    <p class="caracteristicas">
+                        <strong>Tipo:</strong> 
+                        <a href="/directorio/?tipo={{ anime.tipo.id }}">{{ anime.tipo }}</a>
+                    </p>
+                    {% if anime.generos.all %}
+                        <p class="caracteristicas">
+                            <strong>Generos:</strong> 
+                            {% for genero in anime.generos.all %}
+                                <a href="/directorio/?genero={{ genero.id }}">{{ genero.genero }}</a> 
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+
+                    <p class="caracteristicas" id="clasificacion">
+                        <strong>Clasificación:</strong> No Disponible
+                    </p>
+                    <p class="caracteristicas" id="nota">
+                        <strong>Nota:</strong> No Disponible
+                    </p>
+
+                    <!-- <p class="caracteristicas">
+                        {% language 'es' %}
+                            <strong>Agregado:</strong> {{ anime.agregado|date:'M d, Y' }}
+                        {% endlanguage %}
+                    </p> -->
+                    {% if episodio.anime.tipo.tipo is not "Película" %}
+                        {% if total_episodios > 1 %}
+                            <p class="caracteristicas">
+                                <strong>Episodios:</strong> {{episodios.count}}
+                            </p>
+                        {% endif %}
+                    {% endif %}
+                    {% if anime.prox_episodio %}
+                        <p class="caracteristicas">
+                            <strong>Proximo episodio:</strong> {{ anime.prox_episodio }}
+                        </p>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff %}
+                            <div class="btn-mod">
+                                <a href="/admin/main_app/anime/{{ anime.id }}/change/">
+                                    Modificar
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </aside>
+                
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="seccion-2">
+        <section class="dark-section">
+            <div class="titulo">
+                {% if anime.tipo.tipo == "Película" %}
+                    {% if total_episodios == 1 %}
+                        <h2><i class="fas fa-list"></i> Película</h2>
+                    {% else %}
+                        <h2><i class="fas fa-list"></i> Episodios</h2>
+                    {% endif %}
+                {% else %}
+                    <h2><i class="fas fa-list"></i> Episodios</h2>
+                {% endif %}
+            </div>
+
+            <div class="episodios">
+                <ul>
+                    {% if episodios %}
+                        {% for episodio in episodios.reverse %}
+                            {% if anime.tipo.tipo == "Película" %}
+                                {% if total_episodios == 1 %}
+                                    <li>
+                                        <a href="{{episodio.get_absolute_url}}">
+                                            <p>Ver <span>{{ anime.nombre }}</span></p>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a href="{{episodio.get_absolute_url}}">
+                                            <p>{{ anime.nombre }} <span>Episodio {{ episodio.numero }}</span></p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <li>
+                                    <a href="{{episodio.get_absolute_url}}">
+                                        <p>{{ anime.nombre }} <span>Episodio {{ episodio.numero }}</span></p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <li>
+                            <p>No hay episodios disponibles aun.</p>
+                        </li>
+                    {% endif %}
+
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <div class="titulo">
+                <h2><i class="fas fa-egg icon-yellow"></i> Relacionados</h2>
+            </div>
+            <ul class="grid-animes relacionados">
+                {% for anime in relacionados %}
+                <li>
+                    <article>
+                        <a href="{{anime.get_absolute_url}}">
+                            <figure>
+                                <span class="tipo">{{ anime.tipo }}</span>
+                                <span class="estreno">{{ anime.estreno }}</span>
+                                <div class="figure-title">
+                                    <p class="gray">{{ anime.estado.estado }}</p>
+                                </div>
+                                <img class="skeleton" src="/media/{{anime.imagen}}" alt="{{anime.nombre}}">
+                            </figure>
+                            <p>{{anime.nombre}}</p>
+                        </a>
+                    </article>
+                </li>
+                {% endfor %}
+    
+            </ul>
+        </section>
+
+        <section class="dark-section">
+            <div class="titulo">
+                <h2><i class="fa fa-comments-o"></i> Comentarios</h2>
+            </div>
+            <div class="comentarios">
+                <button class="boton-expandible comentario" id="abrir-comentarios" onclick="abrirComentarios(this)">Mostrar Comentarios</button>
+            </div>
+            <script>
+                /**
+                *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+                /*
+                var disqus_config = function () {
+                this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+                this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                };
+                */
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        </section>
+    </div>
+</main>
+
+{% endblock %}
