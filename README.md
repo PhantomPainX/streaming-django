@@ -1,3 +1,3 @@
 # streaming-django
 
-Backend de [https://github.com/PhantomPainX/streaming-ionic](url) creado con DJANGO Framework en conjunto con REST Framework.
+Backend de [streaming-ionic](https://github.com/PhantomPainX/streaming-ionic) creado con DJANGO Framework en conjunto con REST Framework.
